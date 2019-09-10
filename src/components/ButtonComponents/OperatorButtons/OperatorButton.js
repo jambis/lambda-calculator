@@ -1,7 +1,16 @@
 import React from "react";
 
-const OperatorButton = ({ operator }) => {
-  return <div className="operator">{operator}</div>;
+const OperatorButton = ({ callback, operator }) => {
+  return (
+    <div
+      className="operator"
+      onClick={() => {
+        callback(operator);
+      }}
+    >
+      {operator}
+    </div>
+  );
 };
 
 export default OperatorButton;

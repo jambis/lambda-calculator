@@ -5,14 +5,14 @@ import { numbers } from "../../../data";
 
 //Import your array data to from the provided data file
 
-const Numbers = () => {
+const Numbers = ({ callback }) => {
   // STEP 2 - add the imported data to state
   //const [number, setNumber] = useState(numbers);
 
   return (
     <div className="numbers">
       {numbers.map((number, index) => (
-        <NumberButton key={index} number={number} />
+        <NumberButton callback={callback} key={index} number={number} />
       ))}
     </div>
   );
