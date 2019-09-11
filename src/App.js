@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import "./App.css";
 // STEP 4 - import the button and display components
 // Don't forget to import any extra css/scss files you build into the correct component
@@ -16,24 +16,59 @@ function App() {
   // the "5" button, or the operator if they click one of those buttons) and then call your setter function to update state.
   // Don't forget to pass the functions (and any additional data needed) to the components as props
   const [total, setTotal] = useState("0");
-  const [operator, setOperator] = useState(null);
-  const [prevValue, setPrevValue] = useState("0");
-
+  const [isNew, setIsNew] = useState(true);
   const handleTotal = number => {
-    if (total === "0") {
+    if (total === "0" && isNew) {
       setTotal(number);
+      setIsNew(false);
     } else if (total.length === 7) {
       console.log(
         "Reached max amount of digits this small calculator can hold, no scientific notation for you."
       );
+    } else if (operator) {
+      setTotal(number);
+    } else if (isNew) {
+      setTotal(number);
+      setIsNew(false);
     } else {
       setTotal(total + number);
     }
   };
 
+  const [operator, setOperator] = useState(null);
   const handleOperator = operation => {
-    setOperator(operation);
+    if (prevValue) {
+      setTotal(eval(`${prevValue + operator + total}`));
+      setOperator(null);
+      setPrevValue(null);
+      setIsNew(true);
+    } else if (operation === "x") {
+      setOperator("*");
+      setPrevValue(total);
+    } else if (operation === "=" && !prevValue) {
+      setOperator(null);
+    } else if (operation === "=" && prevValue) {
+      setTotal(eval(`${prevValue + operator + total}`));
+      setOperator(null);
+      setPrevValue(null);
+      setIsNew(true);
+    } else {
+      setOperator(operation);
+      setIsNew(true);
+      setPrevValue(total);
+    }
   };
+
+  const handleSpecials = special => {
+    if (special === "C") {
+      setTotal("0");
+      setOperator(null);
+      setPrevValue(null);
+      setIsNew(true);
+    }
+  };
+
+  const [prevValue, setPrevValue] = useState(null);
 
   return (
     <div className="container">
@@ -41,7 +76,7 @@ function App() {
       <Display display={total} />
       <div className="App">
         <div className="left-side">
-          <Specials />
+          <Specials callback={handleSpecials} />
           <Numbers callback={handleTotal} />
         </div>
         <div className="right-side">
